@@ -1,0 +1,3 @@
+INSERT INTO endpoint_model (id, template, email_origin, email_destination) VALUES (1, 'template1', 'origin1@test.com', 'destination1@test.com');
+INSERT INTO endpoint_model (id, template, email_origin, email_destination) VALUES (2, 'template1', 'origin1@test.com', 'destination2@test.com');
+INSERT INTO endpoint_model (id, template, email_origin, email_destination) VALUES (3, 'template2', 'origin2@test.com', 'destination2@test.com');
