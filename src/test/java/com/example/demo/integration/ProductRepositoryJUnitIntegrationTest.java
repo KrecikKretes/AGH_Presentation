@@ -9,7 +9,7 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ProductRepositoryIntegrationTest2 extends TestcontainersConfiguration {
+class ProductRepositoryJUnitIntegrationTest extends TestcontainersConfiguration {
 
     /*
     TODO:
@@ -18,7 +18,7 @@ class ProductRepositoryIntegrationTest2 extends TestcontainersConfiguration {
     2. Stworzyc unit testy z mockami
     3. Stworzyc jeszcze jeden test - DONE
     4. Dodac endpointy do edycji
-    5. Przygotowac wariant, ze baza jest reuzywana
+    5. Przygotowac wariant, ze baza jest reuzywana - DONE
      */
 
     @Test

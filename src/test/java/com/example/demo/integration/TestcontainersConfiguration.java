@@ -13,24 +13,29 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest(classes = DemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
+//@Testcontainers
 @ActiveProfiles("test")
-public class TestcontainersConfiguration {
+public abstract class TestcontainersConfiguration {
 
     @Container
     static PostgreSQLContainer<?> postgres =
             new PostgreSQLContainer<>("postgres:16-alpine")
                     .withInitScript("db/init.sql");
+//                    .withReuse(true);
 
-    @BeforeAll
-    static void beforeAll() {
+    static {
         postgres.start();
     }
 
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
+//    @BeforeAll
+//    static void beforeAll() {
+//        postgres.start();
+//    }
+//
+//    @AfterAll
+//    static void afterAll() {
+//        postgres.stop();
+//    }
 
     @LocalServerPort
     protected int serverPort;
