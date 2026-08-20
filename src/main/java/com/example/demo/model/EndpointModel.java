@@ -15,7 +15,7 @@ public class EndpointModel {
 
     private String emailDestination;
 
-    EndpointEntity toEntity() {
+    public EndpointEntity toEntity() {
         var entity = new EndpointEntity();
         entity.setId(id);
         entity.setTemplate(template);
