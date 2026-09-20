@@ -1,8 +1,16 @@
 package com.example.demo.integration;
 
+import com.example.demo.model.EndpointEntity;
 import com.example.demo.model.EndpointModel;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -10,21 +18,29 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Sql(
+        scripts = "/db/test-data.sql",
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
 class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfiguration {
 
-    /*
-    TODO:
-    1. Refaktor tej klasy. Wywalic rzeczy testcontainerowe do osobnej klasy - DONE
-    1.5 Stworzyc te same testy z inna biblioteka
-    2. Stworzyc unit testy z mockami
-    3. Stworzyc jeszcze jeden test - DONE
-    4. Dodac endpointy do edycji
-    5. Przygotowac wariant, ze baza jest reuzywana - DONE
-     */
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory();
+    private final RestTemplate restTemplate = new RestTemplate(requestFactory);
 
     private final String baseUri = "http://localhost:";
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setup(){
+        restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
+            @Override
+            public boolean hasError(HttpStatusCode statusCode) {
+                return false;
+            }
+        });
+    }
 
     @Test
     void shouldGetAllProducts() {
@@ -67,5 +83,73 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
 
         //then
         assertEquals(responseBody.getBody(), expectedResult);
+    }
+
+
+    @Test
+    void shouldUpdateOneProduct() {
+        //given
+        var id = 4L;
+        var body = new EndpointModel()
+                .setId(id)
+                .setTemplate("email_template")
+                .setEmailOrigin("email_origin")
+                .setEmailDestination("email_destination");
+
+        var endpoint = "/update";
+        var uri = baseUri + serverPort + endpoint;
+
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var request = new HttpEntity<>(body, headers);
+
+        //when
+        var responseBody = restTemplate.exchange(
+                URI.create(uri),
+                HttpMethod.PATCH,
+                request,
+                String.class
+        );
+
+        //then
+        var result = jdbcTemplate.queryForObject(
+                "SELECT * FROM endpoint_model WHERE id = ?",
+                new BeanPropertyRowMapper<>(EndpointEntity.class),
+                id
+        );
+
+        assertEquals(responseBody.getStatusCode(), HttpStatusCode.valueOf(200));
+        assertEquals(responseBody.getBody(), "Data updated");
+        assertEquals(body, EndpointModel.toModel(result));
+    }
+
+    @Test
+    void shouldNotUpdateProduct() {
+        //given
+        var id = 1L;
+        var body = new EndpointModel()
+                .setId(id)
+                .setTemplate("email_template")
+                .setEmailOrigin("email_origin")
+                .setEmailDestination("email_destination");
+
+        var endpoint = "/update";
+        var uri = baseUri + serverPort + endpoint;
+
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var request = new HttpEntity<>(body, headers);
+
+        //when
+        var responseBody = restTemplate.exchange(
+                URI.create(uri),
+                HttpMethod.PATCH,
+                request,
+                String.class
+        );
+
+        //then
+        assertEquals(HttpStatusCode.valueOf(400), responseBody.getStatusCode());
+        assertEquals("Entity with id " + id + " not exist", responseBody.getBody());
     }
 }

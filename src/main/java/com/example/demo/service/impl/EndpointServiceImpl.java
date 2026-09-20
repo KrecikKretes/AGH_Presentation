@@ -5,8 +5,10 @@ import com.example.demo.repository.EndpointRepository;
 import com.example.demo.service.EndpointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,5 +27,17 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     public EndpointModel getData(Long id) {
         return EndpointModel.toModel(endpointRepository.findEndpointModelById(id));
+    }
+
+    @Override
+    public void updateData(EndpointModel endpointModel) {
+        var entity = endpointRepository.findEndpointModelById(endpointModel.getId());
+        if (entity == null) {
+            throw new NoSuchElementException("Entity with id " + endpointModel.getId() + " not exist");
+        }
+        entity.setTemplate(endpointModel.getTemplate());
+        entity.setEmailOrigin(endpointModel.getEmailOrigin());
+        entity.setEmailDestination(endpointModel.getEmailDestination());
+        endpointRepository.save(entity);
     }
 }

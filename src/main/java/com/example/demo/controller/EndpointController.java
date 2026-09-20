@@ -5,9 +5,7 @@ import com.example.demo.service.EndpointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +24,12 @@ public class EndpointController {
     @GetMapping("/{id}")
     private ResponseEntity<EndpointModel> getData(@PathVariable Long id) {
        return ResponseEntity.ok(endpointService.getData(id));
+    }
+
+    @PatchMapping("/update")
+    private ResponseEntity<String> updateData(@RequestBody EndpointModel endpointModel){
+        endpointService.updateData(endpointModel);
+        return ResponseEntity.ok("Data updated");
     }
 
 }

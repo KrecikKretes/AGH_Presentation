@@ -31,4 +31,22 @@ public class EndpointModel {
                 .setEmailOrigin(endpointEntity.getEmailOrigin())
                 .setEmailDestination(endpointEntity.getEmailDestination());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        final EndpointModel other = (EndpointModel) obj;
+
+        return this.id.equals(other.id) &&
+                this.template.equals(other.template) &&
+                this.emailOrigin.equals(other.emailOrigin) &&
+                this.emailDestination.equals(other.emailDestination);
+    }
 }
