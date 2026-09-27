@@ -6,8 +6,6 @@ import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
@@ -114,7 +112,7 @@ class ProductRepositoryRestAssuredIntegrationTest extends TestcontainersConfigur
                 id
         );
 
-        assertEquals(responseBody, "Data updated");
+        assertEquals("Data updated", responseBody);
         assertEquals(body, EndpointModel.toModel(result));
     }
 
@@ -143,6 +141,38 @@ class ProductRepositoryRestAssuredIntegrationTest extends TestcontainersConfigur
                     .asString();
 
         //then
-        assertEquals(responseBody, "Entity with id " + id + " not exist");
+        assertEquals("Entity with id " + id + " not exist", responseBody);
+    }
+
+    @Test
+    void shouldInsertOneProduct() {
+        //given
+        var body = new EndpointModel()
+                .setTemplate("new_email_template")
+                .setEmailOrigin("new_email_origin")
+                .setEmailDestination("new_email_destination");
+
+        //when
+        var responseBody = given()
+                    .baseUri("http://localhost")
+                    .port(serverPort)
+                    .contentType(ContentType.JSON)
+                .when()
+                    .body(body)
+                    .post("/insert")
+                .then()
+                    .statusCode(200)
+                    .extract()
+                    .body()
+                    .asString();
+
+        //then
+        var result = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM endpoint_model",
+                Integer.class
+        );
+
+        assertEquals("Data inserted", responseBody);
+        assertEquals(4, result);
     }
 }

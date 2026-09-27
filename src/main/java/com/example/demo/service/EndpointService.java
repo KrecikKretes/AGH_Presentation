@@ -11,4 +11,7 @@ public interface EndpointService {
     EndpointModel getData(Long id);
 
     void updateData(EndpointModel endpointModel);
+
+    void insertData(EndpointModel endpointModel);
+
 }

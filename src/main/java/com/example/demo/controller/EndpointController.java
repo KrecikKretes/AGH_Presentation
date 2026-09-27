@@ -32,4 +32,10 @@ public class EndpointController {
         return ResponseEntity.ok("Data updated");
     }
 
+    @PostMapping("/insert")
+    private ResponseEntity<String> insertData(@RequestBody EndpointModel endpointModel) {
+        endpointService.insertData(endpointModel);
+        return ResponseEntity.ok("Data inserted");
+
+    }
 }

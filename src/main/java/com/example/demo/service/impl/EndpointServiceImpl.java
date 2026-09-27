@@ -5,7 +5,6 @@ import com.example.demo.repository.EndpointRepository;
 import com.example.demo.service.EndpointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -39,5 +38,10 @@ public class EndpointServiceImpl implements EndpointService {
         entity.setEmailOrigin(endpointModel.getEmailOrigin());
         entity.setEmailDestination(endpointModel.getEmailDestination());
         endpointRepository.save(entity);
+    }
+
+    @Override
+    public void insertData(EndpointModel endpointModel) {
+        endpointRepository.save(endpointModel.toEntity());
     }
 }

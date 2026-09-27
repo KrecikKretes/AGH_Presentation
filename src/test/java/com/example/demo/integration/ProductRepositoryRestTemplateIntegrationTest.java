@@ -2,6 +2,7 @@ package com.example.demo.integration;
 
 import com.example.demo.model.EndpointEntity;
 import com.example.demo.model.EndpointModel;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
     void setup(){
         restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
-            public boolean hasError(HttpStatusCode statusCode) {
+            public boolean hasError(@NonNull HttpStatusCode statusCode) {
                 return false;
             }
         });
@@ -119,7 +120,7 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
         );
 
         assertEquals(responseBody.getStatusCode(), HttpStatusCode.valueOf(200));
-        assertEquals(responseBody.getBody(), "Data updated");
+        assertEquals("Data updated", responseBody.getBody());
         assertEquals(body, EndpointModel.toModel(result));
     }
 
@@ -151,5 +152,39 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
         //then
         assertEquals(HttpStatusCode.valueOf(400), responseBody.getStatusCode());
         assertEquals("Entity with id " + id + " not exist", responseBody.getBody());
+    }
+
+
+    @Test
+    void shouldInsertOneProduct() {
+        //given
+        var body = new EndpointModel()
+                .setTemplate("new_email_template")
+                .setEmailOrigin("new_email_origin")
+                .setEmailDestination("new_email_destination");
+
+        var endpoint = "/insert";
+        var uri = baseUri + serverPort + endpoint;
+
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var request = new HttpEntity<>(body, headers);
+
+        //when
+        var responseBody = restTemplate.exchange(
+                URI.create(uri),
+                HttpMethod.POST,
+                request,
+                String.class
+        );
+
+        //then
+        var result = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM endpoint_model",
+                Integer.class
+        );
+
+        assertEquals("Data inserted", responseBody.getBody());
+        assertEquals(4, result);
     }
 }
