@@ -1,7 +1,8 @@
-package com.example.demo.integration;
+package com.zawisza.email.integration;
 
-import com.example.demo.model.EndpointEntity;
-import com.example.demo.model.EndpointModel;
+import com.zawisza.email.TestcontainersConfiguration;
+import com.zawisza.email.model.EmailEntity;
+import com.zawisza.email.model.EmailModel;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         scripts = "/db/test-data.sql",
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
-class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfiguration {
+class EmailRepositoryRestTemplateIntegrationTest extends TestcontainersConfiguration {
 
     private final JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory();
     private final RestTemplate restTemplate = new RestTemplate(requestFactory);
@@ -44,7 +45,7 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
     }
 
     @Test
-    void shouldGetAllProducts() {
+    void shouldGetAllEmails() {
         //given
         var endpoint = "/all";
         var uri = baseUri + serverPort + endpoint;
@@ -63,10 +64,10 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
     }
 
     @Test
-    void shouldGetOneProducts() {
+    void shouldGetOneEmails() {
         //given
         var id = 4;
-        var expectedResult = new EndpointModel()
+        var expectedResult = new EmailModel()
                 .setId(4L)
                 .setTemplate("test-template1")
                 .setEmailOrigin("test-origin1@test.com")
@@ -79,7 +80,7 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
                 URI.create(uri),
                 HttpMethod.GET,
                 null,
-                EndpointModel.class
+                EmailModel.class
         );
 
         //then
@@ -88,10 +89,10 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
 
 
     @Test
-    void shouldUpdateOneProduct() {
+    void shouldUpdateOneEmail() {
         //given
         var id = 4L;
-        var body = new EndpointModel()
+        var body = new EmailModel()
                 .setId(id)
                 .setTemplate("email_template")
                 .setEmailOrigin("email_origin")
@@ -114,21 +115,21 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
 
         //then
         var result = jdbcTemplate.queryForObject(
-                "SELECT * FROM endpoint_model WHERE id = ?",
-                new BeanPropertyRowMapper<>(EndpointEntity.class),
+                "SELECT * FROM email_model WHERE id = ?",
+                new BeanPropertyRowMapper<>(EmailEntity.class),
                 id
         );
 
         assertEquals(responseBody.getStatusCode(), HttpStatusCode.valueOf(200));
         assertEquals("Data updated", responseBody.getBody());
-        assertEquals(body, EndpointModel.toModel(result));
+        assertEquals(body, EmailModel.toModel(result));
     }
 
     @Test
-    void shouldNotUpdateProduct() {
+    void shouldNotUpdateEmail() {
         //given
         var id = 1L;
-        var body = new EndpointModel()
+        var body = new EmailModel()
                 .setId(id)
                 .setTemplate("email_template")
                 .setEmailOrigin("email_origin")
@@ -156,9 +157,9 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
 
 
     @Test
-    void shouldInsertOneProduct() {
+    void shouldInsertOneEmail() {
         //given
-        var body = new EndpointModel()
+        var body = new EmailModel()
                 .setTemplate("new_email_template")
                 .setEmailOrigin("new_email_origin")
                 .setEmailDestination("new_email_destination");
@@ -180,7 +181,7 @@ class ProductRepositoryRestTemplateIntegrationTest extends TestcontainersConfigu
 
         //then
         var result = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM endpoint_model",
+                "SELECT COUNT(*) FROM email_model",
                 Integer.class
         );
 

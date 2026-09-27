@@ -1,8 +1,8 @@
-package com.example.demo.unit;
+package com.zawisza.email.unit;
 
-import com.example.demo.model.EndpointModel;
-import com.example.demo.repository.EndpointRepository;
-import com.example.demo.service.impl.EndpointServiceImpl;
+import com.zawisza.email.model.EmailModel;
+import com.zawisza.email.repository.EmailRepository;
+import com.zawisza.email.service.impl.EmailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,18 +19,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EndpointServiceTest {
+public class EmailServiceTest {
 
     @Mock
-    private EndpointRepository repository;
+    private EmailRepository repository;
 
     @InjectMocks
-    private EndpointServiceImpl service;
+    private EmailServiceImpl service;
 
     @Test
     void getAllData() {
         //given
-        var model = new EndpointModel()
+        var model = new EmailModel()
                 .setId(1L)
                 .setTemplate("template")
                 .setEmailOrigin("emailOrigin")
@@ -49,7 +49,7 @@ public class EndpointServiceTest {
     @Test
     void getDataById() {
         //given
-        var model = new EndpointModel()
+        var model = new EmailModel()
                 .setId(1L)
                 .setTemplate("template")
                 .setEmailOrigin("emailOrigin")
@@ -65,12 +65,12 @@ public class EndpointServiceTest {
     @Test
     void updateData() {
         //given
-        var model = new EndpointModel()
+        var model = new EmailModel()
                 .setId(1L)
                 .setTemplate("template")
                 .setEmailOrigin("emailOrigin")
                 .setEmailDestination("emailDestination");
-        var newModel = new EndpointModel()
+        var newModel = new EmailModel()
                 .setId(1L)
                 .setTemplate("new_template")
                 .setEmailOrigin("new_emailOrigin")
@@ -91,7 +91,7 @@ public class EndpointServiceTest {
     @Test
     void notUpdateDataByEntityWithTheSameIdExist() {
         //given
-        var newModel = new EndpointModel()
+        var newModel = new EmailModel()
                 .setId(1L)
                 .setTemplate("new_template")
                 .setEmailOrigin("new_emailOrigin")
@@ -108,7 +108,7 @@ public class EndpointServiceTest {
     @Test
     void insertData() {
         //given
-        var newModel = new EndpointModel()
+        var newModel = new EmailModel()
                 .setId(1L)
                 .setTemplate("new_template")
                 .setEmailOrigin("new_emailOrigin")

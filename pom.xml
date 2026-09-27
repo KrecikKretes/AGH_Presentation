@@ -8,9 +8,9 @@
 		<version>4.0.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>demo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<groupId>com.zawisza</groupId>
+	<artifactId>email</artifactId>
+	<version>1.0.0</version>
 	<name/>
 	<description/>
 	<url/>

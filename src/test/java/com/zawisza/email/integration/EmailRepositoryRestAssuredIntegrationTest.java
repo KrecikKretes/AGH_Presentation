@@ -1,7 +1,8 @@
-package com.example.demo.integration;
+package com.zawisza.email.integration;
 
-import com.example.demo.model.EndpointEntity;
-import com.example.demo.model.EndpointModel;
+import com.zawisza.email.TestcontainersConfiguration;
+import com.zawisza.email.model.EmailEntity;
+import com.zawisza.email.model.EmailModel;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
@@ -19,24 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         scripts = "/db/test-data.sql",
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
-class ProductRepositoryRestAssuredIntegrationTest extends TestcontainersConfiguration {
-
-    /*
-    TODO:
-    1. Refaktor tej klasy. Wywalic rzeczy testcontainerowe do osobnej klasy - DONE
-    1.5 Stworzyc te same testy z inna biblioteka - DONE
-    2. Stworzyc unit testy z mockami - DONE
-    3. Stworzyc jeszcze jeden test - DONE
-    4. Dodac endpointy do edycji - DONE
-    5. Przygotowac wariant, ze baza jest reuzywana - DONE
-    6. Jacoco/Sonatype?
-     */
+class EmailRepositoryRestAssuredIntegrationTest extends TestcontainersConfiguration {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void shouldGetAllProducts() {
+    void shouldGetAllEmails() {
         //given
 
         //when
@@ -49,17 +39,17 @@ class ProductRepositoryRestAssuredIntegrationTest extends TestcontainersConfigur
                     .statusCode(200)
                     .extract()
                     .body()
-                    .as(new TypeRef<List<EndpointModel>>() {});
+                    .as(new TypeRef<List<EmailModel>>() {});
 
         //then
         assertEquals(3, responseBody.size());
     }
 
     @Test
-    void shouldGetOneProducts() {
+    void shouldGetOneEmail() {
         //given
         var id = 4;
-        var expectedResult = new EndpointModel()
+        var expectedResult = new EmailModel()
                 .setId(4L)
                 .setTemplate("test-template1")
                 .setEmailOrigin("test-origin1@test.com")
@@ -75,17 +65,17 @@ class ProductRepositoryRestAssuredIntegrationTest extends TestcontainersConfigur
                     .statusCode(200)
                     .extract()
                     .body()
-                    .as(new TypeRef<EndpointModel>() {});
+                    .as(new TypeRef<EmailModel>() {});
 
         //then
         assertEquals(responseBody, expectedResult);
     }
 
     @Test
-    void shouldUpdateOneProduct() {
+    void shouldUpdateOneEmail() {
         //given
         var id = 4L;
-        var body = new EndpointModel()
+        var body = new EmailModel()
                 .setId(id)
                 .setTemplate("email_template")
                 .setEmailOrigin("email_origin")
@@ -107,20 +97,20 @@ class ProductRepositoryRestAssuredIntegrationTest extends TestcontainersConfigur
 
         //then
         var result = jdbcTemplate.queryForObject(
-                "SELECT * FROM endpoint_model WHERE id = ?",
-                new BeanPropertyRowMapper<>(EndpointEntity.class),
+                "SELECT * FROM email_model WHERE id = ?",
+                new BeanPropertyRowMapper<>(EmailEntity.class),
                 id
         );
 
         assertEquals("Data updated", responseBody);
-        assertEquals(body, EndpointModel.toModel(result));
+        assertEquals(body, EmailModel.toModel(result));
     }
 
     @Test
-    void shouldNotUpdateProduct() {
+    void shouldNotUpdateEmail() {
         //given
         var id = 1L;
-        var body = new EndpointModel()
+        var body = new EmailModel()
                 .setId(id)
                 .setTemplate("email_template")
                 .setEmailOrigin("email_origin")
@@ -145,9 +135,9 @@ class ProductRepositoryRestAssuredIntegrationTest extends TestcontainersConfigur
     }
 
     @Test
-    void shouldInsertOneProduct() {
+    void shouldInsertOneEmail() {
         //given
-        var body = new EndpointModel()
+        var body = new EmailModel()
                 .setTemplate("new_email_template")
                 .setEmailOrigin("new_email_origin")
                 .setEmailDestination("new_email_destination");
@@ -168,7 +158,7 @@ class ProductRepositoryRestAssuredIntegrationTest extends TestcontainersConfigur
 
         //then
         var result = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM endpoint_model",
+                "SELECT COUNT(*) FROM email_model",
                 Integer.class
         );
 

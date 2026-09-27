@@ -1,11 +1,11 @@
-package com.example.demo.model;
+package com.zawisza.email.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class EndpointModel {
+public class EmailModel {
 
     private Long id;
 
@@ -15,8 +15,8 @@ public class EndpointModel {
 
     private String emailDestination;
 
-    public EndpointEntity toEntity() {
-        var entity = new EndpointEntity();
+    public EmailEntity toEntity() {
+        var entity = new EmailEntity();
         entity.setId(id);
         entity.setTemplate(template);
         entity.setEmailOrigin(emailOrigin);
@@ -24,12 +24,12 @@ public class EndpointModel {
         return entity;
     }
 
-    public static EndpointModel toModel(EndpointEntity endpointEntity) {
-        return new EndpointModel()
-                .setId(endpointEntity.getId())
-                .setTemplate(endpointEntity.getTemplate())
-                .setEmailOrigin(endpointEntity.getEmailOrigin())
-                .setEmailDestination(endpointEntity.getEmailDestination());
+    public static EmailModel toModel(EmailEntity emailEntity) {
+        return new EmailModel()
+                .setId(emailEntity.getId())
+                .setTemplate(emailEntity.getTemplate())
+                .setEmailOrigin(emailEntity.getEmailOrigin())
+                .setEmailDestination(emailEntity.getEmailDestination());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class EndpointModel {
             return false;
         }
 
-        final EndpointModel other = (EndpointModel) obj;
+        final EmailModel other = (EmailModel) obj;
 
         return this.id.equals(other.id) &&
                 this.template.equals(other.template) &&

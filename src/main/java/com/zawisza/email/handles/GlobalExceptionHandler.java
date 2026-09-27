@@ -1,4 +1,4 @@
-package com.example.demo.handles;
+package com.zawisza.email.handles;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
